@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-position: 0 -60px;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+    }
+
+    #game {
+        width: 600px;
+        height: 620px;
+        background-image: url('funny/bgcover.png');
+        background-size: cover;
+        /* background-image: linear-gradient(to bottom right, rgb(0, 71, 163) , rgb(0, 183, 255)); */
+        /* opacity: .8; */
+        /* border: 1px rgb(214, 214, 214) solid ; */
+        filter: drop-shadow(10px 10px 10px rgba(121, 121, 121, 0.5));
+        margin: 150px auto;
+        /* border-radius: 10px; */
+        /* transform:  perspective(180px) rotateY(-5deg);
+        transition: transform 0.2s; */
+    }
+
+    .title {
+        filter: drop-shadow(5px 5px 5px rgba(139, 139, 139, 0.5));
+        float: left;
+        margin-left: 35px;
+        background-image: url('funny/title.png');
+        height: 100px;
+        width: 320px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        text-decoration: none;
+    }
+
+    .titlebg {
+        background-image: url('funny/download.png');
+        float: left;
+        margin-left: 95px;
+        margin-top: 160px;
+        height: 100px;
+        width: 427px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        text-decoration: none;
+    }
+
+    .btn {
+        opacity: 0.7;
+        text-align: center;
+        background-image: url('funny/btn.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        filter: drop-shadow(5px 5px 5px rgba(121, 121, 121, 0.5));
+        width: 375px;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        margin: 180px 100px 0;
+        text-decoration: none;
+    }
+    .btn:hover{
+        cursor: pointer;
+    }
+</style>
+
+<body background="funny/bg1.jpg">
+    <div id="game">
+        <div class="titlebg">
+            <p class="title"></p>
+        </div>
+
+
+        <a href="box.html"><button class="btn">开&nbsp;&nbsp;始&nbsp;&nbsp;游&nbsp;&nbsp;戏</button></a>
+
+    </div>
+</body>
+
+</html>

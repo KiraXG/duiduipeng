@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-position: 0 -60px;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+    }
+
+    #game {
+        width: 800px;
+        height: 800px;
+        margin: 50px auto 0;
+        background-color: red;
+    }
+
+    .block {
+        box-sizing: border-box;
+        /*为元素指定的任何内边距和边框都将在已设定的宽度和高度内进行绘制*/
+        float: left;
+        background-color: gainsboro;
+        border: 2px solid white;
+        position: relative;
+    }
+
+    .block:hover {
+        background-color: aqua;
+    }
+
+    .pic {
+        width: 100%;
+        height: 100%;
+        background-image: url("funny/1.jpg");
+        background-repeat: no-repeat;
+        background-position: center center;
+        transform: scaleX(0);
+        transition: transform 0.2s;
+
+    }
+
+    .block.on .pic {
+        transform: scaleX(1);
+    }
+</style>
+
+<body background="funny/bg1.jpg">
+
+    <div id="game">
+    </div>
+
+</body>
+<script>
+    //对象收编变量
+    var game = {
+        //10.设置game的宽高
+        gameWidth: 800,
+        gameHeight: 800,
+        //23.图片的数量
+        picNum: 17,
+        judgeArr: [],//40. 存储点击元素的信息，判断是否翻过去
+        turnNum: 0,
+
+        //初始化,调用其他三个函数
+        //1. options传递配置对象
+        init: function (options) {
+            //this === game， this指向game
+            //2. 将init里的options传递给initData，因为初始化数据的操作是在这里面
+            this.initData(options);
+            this.render();
+            this.handle();          
+        },
+
+        //初始化数据
+        
+        initData: function (options) {
+
+            this.el = options.el;//把下面这些属性放到game里面
+            this.level = options.level;
+            this.blocks = (this.level * 2) * (this.level * 2);//8. 生成block的块数
+            this.dataArr = this.getDataArr();//14. 存放的是去生成block元素的数据，单独去做，通过一个函数去生成
+            this.getRandomArr();
+        },
+
+        getDataArr: function () {//生成block元素（图片）的数据，pic的url地址
+            var randomArr = this.getRandomArr();//28. 调用随机数组
+            var arr = [];//18 .创建新数组，存放循环生成的图片信息
+            var halfBlocks = this.blocks / 2;//15.拿到所有blocks的数量，除以2(配对)，生成一半的图片
+            
+            for (var i = 0; i < halfBlocks; i++) {//16. 对halfBlock进行循环
+                var num = randomArr[i];
+                var info = {//17. 存放用到的图片的信息
+                    index: num,//45. 设置index值，使用的第几个图片
+                    url: "url('funny/" + num + ".jpg')"//
+                };
+                arr.push(info, info);//19.往arr里面添加图片信息（元素），每次添加两个
+            }
+            return this.shuffle(arr);//20.将循环生成的返回到getDataArr里 30.1 调用
+        },
+
+        getRandomArr: function () {//22. 获取随机的图片序列
+
+            var arr = [];//24. 设置新的数组，存放随机序列
+            for (var i = 0; i < this.picNum; i++) {
+                arr.push(i + 1);
+            }
+            return this.shuffle(arr);//30.2 调用 
+
+        },
+
+        shuffle: function (arr) {//25. 生成随机数组，28. arr由外界传过来，进行处理
+            arr.sort(function () {//26. sort <0正序 =0不变 >0倒序
+                return Math.random() - 0.5;//27. Math.random 0-1之间的小数，返回正数和负数，50%概率
+            });
+            return arr;//29. 将处理后的arr返回去
+        },
+
+        //渲染，生成更新元素
+        render: function () {
+            var blockWidth = this.gameWidth / (this.level * 2);//11. 求block的宽度和高度，小方块的宽高 = game的宽高度除以级别数 * 2
+            var blockHeight = this.gameHeight / (this.level * 2);
+
+
+            for (var i = 0; i < this.blocks; i++) {//9. this.blocks，上面定义的块数，for循环生成所有的块数
+                
+                var info = this.dataArr[i];//20. 去dataArr里面拿到pic的url序号
+
+                var oBlock = document.createElement('div');//3. 创建block元素，生成
+                var oPic = document.createElement('div');//4. 创建pic元素
+
+                oPic.style.backgroundImage = info.url;//13. 设置pic元素的图片 21. 直接赋值url
+
+                oBlock.style.width = blockWidth + 'px';//12. 将求得的block的宽高传递过去
+                oBlock.style.height = blockHeight + 'px';
+
+                oPic.setAttribute('class', 'pic');//5. 设置元素特性，（设置元素的特性，设置给它的值）
+                oBlock.setAttribute('class', 'block');
+
+                oBlock.appendChild(oPic);//6. 将pic元素添加到block里面
+                oBlock.setAttribute('index', info.index);//44. 
+                this.el.appendChild(oBlock);//7. 将block元素添加到game里面
+            }
+
+        },
+
+        //事件监听
+        handle: function () {
+            var self = this; //37. 想指向game，就需要先保存一下this的指向
+            this.el.onclick = function (e) {//31. 监听父元素el的点击事件，e是事件对象；点击block执行，点击pic不执行
+                var dom = e.target;//32. 触发了事件的元素，用dom接收一下
+                var isBlock = dom.classList.contains('block'); //33. 创建isBlock，判断里面是否包含block元素，contains返回布尔值
+                if (isBlock) {//34. 判断true or false
+                    //this.handleBlock() //36. this指向的是监听事件的元素el
+                    self.handleBlock(dom);//38. 将dom传过去
+                }
+            };
+        },
+
+        handleBlock: function (dom) {//35. 处理是否为block
+            var index = dom.getAttribute('index');//46. 点击每一个block时拿到它的特性值（图片的序列号）
+            var judgeLength = this.judgeArr.push({//41. 将当前的信息传进去，push返回长度 42.拿到数组长度
+                index: index,//43. 用到的图片的数值/序列
+                dom: dom
+            });
+
+            dom.classList.add('on');//39. 将牌翻过去；添加新的类名，如已经存在，取消添加
+
+            if (judgeLength === 2) { this.judgePic() }//42. 判断数组长度是否一样
+            this.judgeWin();
+        },
+
+        judgePic: function () {//47.判断是否为同一个图片
+            var judgeArr = this.judgeArr;//48. 拿到judgeArr
+            var isSamePic = judgeArr[0].index === judgeArr[1].index;
+            if (isSamePic) {
+                
+                this.turnNum += 2;//53.是就加两个数
+            }
+            else {
+                var dom1 = judgeArr[0].dom;//49.设置dom1，dom2来存储这两个值
+                var dom2 = judgeArr[1].dom;
+
+                setTimeout(function () {
+                    dom1.classList.remove('on');//50. 翻回去
+                    dom2.classList.remove('on');
+                }, 800)
+
+            }
+
+            judgeArr.length = 0;//51. 清空之前两个的图片翻转信息
+        },
+
+        judgeWin: function () {//52.判断是否胜利
+            if (this.turnNum === this.blocks) {//54.当翻转的数量等于block的数量时胜利
+                setTimeout(function () {
+                    alert('恭喜你配对了所有块块！');
+                }, 100)
+            }
+        }
+    };
+
+    game.init({
+        //el为父元素，要渲染的那个
+        //将game选中
+        el: document.getElementById('game'),
+        level: 2,
+    });
+    
+</script>
+
+</html>
